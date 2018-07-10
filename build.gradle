@@ -1,5 +1,27 @@
 apply plugin: 'com.android.library'
+buildscript {
 
+    repositories {
+
+        jcenter()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.+'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+    }
+}
+allprojects {
+    repositories {
+        mavenCentral()
+
+    }
+}
 android {
     compileSdkVersion 27
 
@@ -21,26 +43,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    apply from: 'install.gradle'
+    apply from: 'bintray.gradle'
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
-task deleteJar(type: Delete) {
-    delete 'libs/jars/m4adroidlib.jar'
-}
 
-task createJar(type: Copy) {
-    from('build/outputs/aar/m4androidlib-release.arr')
-    into('libs/jars/')
-    include('classes.jar')
-    rename('classes.jar', 'm4adroidlib.jar')
+repositories {
+    google()
 }
-
-createJar.dependsOn(deleteJar, build)

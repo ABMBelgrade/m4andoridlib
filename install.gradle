@@ -1,0 +1,39 @@
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = 'com.antoniocappiello.library' // CREATE A GROUP ID FOR YOUR LIBRARY
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                groupId 'com.belgrade.advancedbrainmonitoring.m4androidlib' // CREATE A GROUP ID FOR YOUR LIBRARY
+                artifactId 'm4androidlib' // THE NAME OF YOUR MODULE
+
+                name 'M4AndroidLib' // YOUR LIBRARY NAME
+                description 'A collections of methods to work with M4 devices.' // YOUR LIBRARY DESCRIPTION
+                url 'https://github.com/ABMBelgrade/m4andoridlib' // YOUR SITE
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'milosh' //YOUR ID
+                        name 'Milos Hadzic' //YOUR NAME
+                        email 'milosh@b-alert.com' //YOUR EMAIL
+                    }
+                }
+                scm {
+                    connection 'https://github.com/ABMBelgrade/m4andoridlib.git' // YOUR GIT REPO
+                    developerConnection 'https://github.com/ABMBelgrade/m4andoridlib.git' // YOUR GIT REPO
+                    url 'https://github.com/ABMBelgrade/m4andoridlib' // YOUR SITE
+
+                }
+            }
+        }
+    }
+}
