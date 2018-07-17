@@ -1,6 +1,6 @@
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.antoniocappiello.library' // CREATE A GROUP ID FOR YOUR LIBRARY
+group = 'com.belgrade.advancedbrainmonitoring.m4androidlib' // CREATE A GROUP ID FOR YOUR LIBRARY
 
 install {
     repositories.mavenInstaller {

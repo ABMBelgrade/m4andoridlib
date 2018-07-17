@@ -6,10 +6,8 @@ package com.belgrade.advancedbrainmonitoring.m4androidlib;
  * @author pilic@b-alert.com
  */
 public class M4Sample {
-    /**
-     * 2 byte counter, range 0 - 65535.
-     */
-    public int sampleCounter;
+
+    public long sampleCounter;
     public int battery;
     /**
      * Contains EEG values

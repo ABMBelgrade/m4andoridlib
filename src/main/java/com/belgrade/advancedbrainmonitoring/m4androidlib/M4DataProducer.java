@@ -20,6 +20,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author pilic@b-alert.com
  */
 public class M4DataProducer extends Thread {
+
+    public static final int V1_M4_PACKET_SIZE = 51;
+    public static int V1_M4_SLOW_CH_INDEX = 49;
+
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
@@ -288,22 +292,22 @@ public class M4DataProducer extends Thread {
      * @see M4Sample
      */
     private List<M4Sample> ParseBytesToM4Sample(byte[] buffer){
-        int firstByte = buffer[0];
-        int secondByte = buffer[1];
-        int packetCount = 0;
         List<M4Sample> samples = new ArrayList<M4Sample>();
-        while (firstByte==86 && secondByte==85) {
+        for (int i = 0; i<buffer.length - V1_M4_PACKET_SIZE;i++){
+            if (buffer[i]==86 && buffer[i+1] == 85)
+            {
+
             M4Sample sample1 = new M4Sample();
             M4Sample sample2 = new M4Sample();
-            int counterHigh = unsignedByte(buffer[packetCount*51 + 48]);
-            int counterLow = unsignedByte(buffer[packetCount*51 + 47]);
-            sample1.sampleCounter = ((counterHigh <<8) | counterLow);
+                int counterHigh = unsignedByte(buffer[i + 48]);
+                int counterLow = unsignedByte(buffer[i + 47]);
+                sample1.sampleCounter = ((counterHigh <<8) | counterLow)*64 + unsignedByte(buffer[i+2]);
             sample2.sampleCounter = sample1.sampleCounter;
-            if (unsignedByte(buffer[packetCount * 51 + 2])==33) {
-                mbBatterVoltageHIGH = unsignedByte(buffer[packetCount * 51 + 49]);
+                if (unsignedByte(buffer[i + 2])==33) {
+                    mbBatterVoltageHIGH = unsignedByte(buffer[i + V1_M4_SLOW_CH_INDEX]);
             }
-            if (unsignedByte(buffer[packetCount * 51 + 2])==32) {
-                mbBatteryVoltageLOW = unsignedByte(buffer[packetCount * 51 + 49]);
+                if (unsignedByte(buffer[i + 2])==32) {
+                    mbBatteryVoltageLOW = unsignedByte(buffer[i + V1_M4_SLOW_CH_INDEX]);
             }
 
             int batteryPerc = getBatteryPercentage(mbBatterVoltageHIGH << 8 | mbBatteryVoltageLOW);
@@ -312,31 +316,31 @@ public class M4DataProducer extends Thread {
 
             int [] val1 = new int [10];
             int [] val2 = new int [10];
-            for(int i = 0; i<10; i++)
+                for(int j = 0; j<10; j++)
             {
 
-                int high1 = unsignedByte(buffer[packetCount * 51 + i*2 + 4]);
-                int low1 = unsignedByte(buffer[packetCount * 51 + i*2 + 3]);
-                int high2 = unsignedByte(buffer[packetCount * 51 + i*2 + 24]);
-                int low2 = unsignedByte(buffer[packetCount * 51 + i*2 + 23]);
+                    int high1 = unsignedByte(buffer[i + j*2 + 4]);
+                    int low1 = unsignedByte(buffer[i + j*2 + 3]);
+                    int high2 = unsignedByte(buffer[i + j*2 + 24]);
+                    int low2 = unsignedByte(buffer[i + j*2 + 23]);
 
-                if (i==1 | i == 2 | i == 3){
-                    val1[i] = -0x8000 + high1*0x0100 + low1;
-                    val2[i] = -0x8000 + high2*0x0100 + low2;
+                    if (j==1 | j == 2 | j == 3){
+                        val1[j] = -0x8000 + high1*0x0100 + low1;
+                        val2[j] = -0x8000 + high2*0x0100 + low2;
                 }
                 else {
-                    val1[i] = high1*0x0100 + low1;
-                    val2[i] = high2*0x0100 + low2;
+                        val1[j] = high1*0x0100 + low1;
+                        val2[j] = high2*0x0100 + low2;
                 }
             }
             sample1.val = val1;
             sample2.val = val2;
             samples.add(sample1);
             samples.add(sample2);
-            packetCount++;
-            firstByte = (int)buffer[packetCount * 51];
-            secondByte = (int)buffer[packetCount*51+1];
+                i+=50;
         }
+        }
+
         return samples;
     }
 

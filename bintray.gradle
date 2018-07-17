@@ -23,7 +23,7 @@ bintray {
 
     configurations = ['archives']
     pkg {
-        repo = 'maven'
+        repo = 'm4androidlib'
         name = 'm4androidlib' //YOUR PACKAGE NAME
         desc = 'A collections of methods to work with M4 devices.' // YOUR LIBRARY DESCRIPTION
         websiteUrl = 'https://github.com/ABMBelgrade/m4andoridlib' // YOUR SITE
